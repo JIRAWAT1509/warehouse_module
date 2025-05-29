@@ -7,6 +7,9 @@ class DocumentDetailTemplate extends StatefulWidget {
   final List<Map<String, dynamic>> items;
   final VoidCallback? onScan;
   final VoidCallback? onSubmit;
+  final VoidCallback? onDelete;
+  final VoidCallback? onScanItem;
+  final VoidCallback? onScanLot;
 
   const DocumentDetailTemplate({
     super.key,
@@ -14,6 +17,9 @@ class DocumentDetailTemplate extends StatefulWidget {
     required this.items,
     this.onScan,
     this.onSubmit,
+    this.onDelete,
+    this.onScanItem,
+    this.onScanLot,
   });
 
   @override
@@ -42,6 +48,7 @@ class _DocumentDetailTemplateState extends State<DocumentDetailTemplate> {
       body: Column(
         children: [
           Padding(
+            //1feildperline
             padding: const EdgeInsets.all(12.0),
             child: Column(
               children: [
@@ -125,11 +132,33 @@ class _DocumentDetailTemplateState extends State<DocumentDetailTemplate> {
               child: const Text('Submit'),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: ElevatedButton(
+              onPressed: widget.onDelete,
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text('Delete'),
+            ),
+          ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.qr_code_scanner),
-        onPressed: widget.onScan,
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton(
+            heroTag: 'itemScan',
+            onPressed: widget.onScanItem,
+            child: const Icon(Icons.qr_code_scanner),
+            tooltip: 'Scan Item',
+          ),
+          // const SizedBox(height: 12),
+          // FloatingActionButton(
+          //   heroTag: 'lotScan',
+          //   onPressed: widget.onScanLot,
+          //   child: const Icon(Icons.qr_code),
+          //   tooltip: 'Scan Lot',
+          // ),
+        ],
       ),
     );
   }

@@ -51,7 +51,7 @@ class _WarehouseListPageState extends State<WarehouseListPage> {
 
     return Builder(
       builder: (context) {
-        scaffoldContext = context; // Set context ที่ไม่หาย
+        scaffoldContext = context;
         return DocumentListTemplate(
           title: 'Stocks',
           documents: viewModel.documents,
@@ -65,11 +65,8 @@ class _WarehouseListPageState extends State<WarehouseListPage> {
                       onDetect: (capture) async {
                         final code = capture.barcodes.first.rawValue;
                         if (code == null) return;
-                        Navigator.pop(context); // Close scanner
-                        await viewModel.handleScan(
-                          scaffoldContext,
-                          code,
-                        ); // ใช้ scaffoldContext แทน
+                        Navigator.pop(context);
+                        await viewModel.handleScan(scaffoldContext, code);
                       },
                       onDetectError:
                           (error, stackTrace) => print("Scan error: $error"),
@@ -77,8 +74,8 @@ class _WarehouseListPageState extends State<WarehouseListPage> {
               ),
             );
           },
-          onItemTap: (item) {
-            Navigator.push(
+          onItemTap: (item) async {
+            final result = await Navigator.push(
               context,
               MaterialPageRoute(
                 builder:
@@ -86,6 +83,9 @@ class _WarehouseListPageState extends State<WarehouseListPage> {
                         DocDetailPage(docNo: item['no']?.toString() ?? ''),
               ),
             );
+            if (result == true) {
+              viewModel.loadDocuments();
+            }
           },
         );
       },

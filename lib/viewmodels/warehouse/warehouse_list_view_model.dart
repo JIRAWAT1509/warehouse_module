@@ -53,18 +53,22 @@ class WarehouseListViewModel with ChangeNotifier {
         final newDoc = {
           'no': scannedCode,
           'date': DateTime.now().toIso8601String().substring(0, 10),
+          'items': [],
         };
         _documents.add(newDoc);
         await saveDocuments();
         notifyListeners();
 
-        // ใช้ context ปัจจุบันทันที (ไม่ต้อง Future.microtask แล้ว)
-        Navigator.push(
+        final pageResult = await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => DocDetailPage(docNo: scannedCode),
           ),
         );
+
+        if (pageResult == true) {
+          await loadDocuments();
+        }
       }
     }
   }
