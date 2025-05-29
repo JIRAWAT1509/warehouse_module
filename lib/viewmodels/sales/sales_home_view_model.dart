@@ -3,7 +3,7 @@ import '../../app/routes.dart';
 
 class SalesHomeViewModel with ChangeNotifier {
   void navigateToSalesShipment(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.salesShipment);
+    Navigator.pushNamed(context, AppRoutes.warehouseList);
   }
 
   void navigateToSalesReturn(BuildContext context) {

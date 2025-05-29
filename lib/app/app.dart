@@ -4,6 +4,7 @@ import 'package:warehouse_module/viewmodels/purchase/purchase_home_view_model.da
 import 'package:warehouse_module/viewmodels/sales/sales_home_view_model.dart';
 import 'package:warehouse_module/viewmodels/main/main_home_view_model.dart';
 import 'package:warehouse_module/viewmodels/warehouse/warehouse_home_view_model.dart';
+import 'package:warehouse_module/viewmodels/warehouse/warehouse_list_view_model.dart';
 import 'routes.dart';
 
 class MyApp extends StatelessWidget {
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => WarehouseHomeViewModel()),
         ChangeNotifierProvider(create: (_) => PurchaseHomeViewModel()),
         ChangeNotifierProvider(create: (_) => SalesHomeViewModel()),
+        ChangeNotifierProvider(create: (_) => WarehouseListViewModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

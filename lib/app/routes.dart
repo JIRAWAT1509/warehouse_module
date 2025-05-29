@@ -6,7 +6,7 @@ import 'package:warehouse_module/views/purchase/purchase_receipt_page.dart';
 import 'package:warehouse_module/views/purchase/purchase_return_page.dart';
 import 'package:warehouse_module/views/sales/sales_home_page.dart';
 import 'package:warehouse_module/views/sales/sales_return_page.dart';
-import 'package:warehouse_module/views/sales/sales_shipment_page.dart';
+import 'package:warehouse_module/views/warehouse/warehouse_list_page.dart';
 import 'package:warehouse_module/views/warehouse/warehouse_home_page.dart';
 
 class AppRoutes {
@@ -15,7 +15,7 @@ class AppRoutes {
   static const String purchaseReceipt = '/purchase/receipt';
   static const String purchaseReturn = '/purchase/return';
   static const String sales = '/sales';
-  static const String salesShipment = '/sales/shipment';
+  static const String warehouseList = '/sales/shipment';
   static const String salesReturn = '/sales/return';
 
   static final Map<String, WidgetBuilder> routes = {
@@ -26,6 +26,6 @@ class AppRoutes {
     purchaseReturn: (context) => const PurchaseReturnPage(),
     sales: (context) => const SalesHomePage(),
     salesReturn: (context) => const SalesReturnPage(),
-    salesShipment: (context) => const SalesShipmentPage(),
+    warehouseList: (context) => const WarehouseListPage(),
   };
 }
