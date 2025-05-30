@@ -71,7 +71,7 @@ class _WarehouseListPageState extends State<WarehouseListPage> {
                       },
                       onDetectError:
                           (error, stackTrace) => print("Scan error: $error"),
-                    ), //Because of different purpose, I prefer this one.
+                    ), //Because of different purpose, I prefer this one. I'll extract it to new file later.
               ),
             );
           },

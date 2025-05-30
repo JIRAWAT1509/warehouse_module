@@ -23,7 +23,7 @@ class _ItemEditPageState extends State<ItemEditPage> {
     );
     qty2Controller = TextEditingController(
       text: widget.item['qty']?.toString() ?? '1',
-    ); // Default ref qty หรือจะใช้ qty เดิมก็ได้
+    );
   }
 
   @override
@@ -45,6 +45,21 @@ class _ItemEditPageState extends State<ItemEditPage> {
             Text(
               'Item No: ${widget.item['itemNo']}',
               style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 12),
+            TextField(
+              controller: TextEditingController(
+                text: widget.item['location'] ?? '',
+              ),
+              decoration: const InputDecoration(labelText: 'Location'),
+              readOnly: true,
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: TextEditingController(text: widget.item['bin'] ?? ''),
+              decoration: const InputDecoration(labelText: 'Bin No.'),
+              readOnly: true,
             ),
 
             const SizedBox(height: 12),
@@ -71,19 +86,41 @@ class _ItemEditPageState extends State<ItemEditPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
+                  // onPressed: () {
+                  //   Navigator.pop(context, {
+                  //     'action': 'confirm',
+                  //     'item': {
+                  //       'itemNo': widget.item['itemNo'],
+                  //       'lotNo': lotController.text,
+                  //       'qty': double.tryParse(qty1Controller.text) ?? 1,
+                  //       'refQty': double.tryParse(qty2Controller.text) ?? 1,
+                  //       'location': widget.item['location'],
+                  //       'bin': widget.item['bin'],
+                  //     },
+                  //   });
+                  // },
                   onPressed: () {
+                    final updatedItem = {
+                      'itemNo': widget.item['itemNo'],
+                      'lotNo': lotController.text,
+                      'qty': double.tryParse(qty1Controller.text) ?? 1,
+                      'location': widget.item['location'],
+                      'bin': widget.item['bin'],
+                    };
+
                     Navigator.pop(context, {
                       'action': 'confirm',
                       'item': {
                         'itemNo': widget.item['itemNo'],
                         'lotNo': lotController.text,
                         'qty': double.tryParse(qty1Controller.text) ?? 1,
-                        'refQty': double.tryParse(qty2Controller.text) ?? 1,
                         'location': widget.item['location'],
                         'bin': widget.item['bin'],
                       },
+                      'oldItem': widget.item,
                     });
                   },
+
                   child: const Text('Save'),
                 ),
                 ElevatedButton(
@@ -117,7 +154,10 @@ class _ItemEditPageState extends State<ItemEditPage> {
                     );
 
                     if (confirmed == true) {
-                      Navigator.pop(context, {'action': 'delete'});
+                      Navigator.pop(context, {
+                        'action': 'delete',
+                        'item': widget.item,
+                      });
                     }
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.red),

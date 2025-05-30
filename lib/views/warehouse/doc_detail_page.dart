@@ -18,7 +18,6 @@ class DocDetailPage extends StatelessWidget {
         builder: (context, viewModel, _) {
           return DocumentDetailTemplate(
             docNo: docNo,
-            items: viewModel.items,
             viewModel: viewModel,
             onScanItem: () async {
               final scannedItems = await Navigator.push(
@@ -28,7 +27,10 @@ class DocDetailPage extends StatelessWidget {
 
               if (scannedItems != null &&
                   scannedItems is List<Map<String, dynamic>>) {
-                viewModel.handleScannedItems(context, scannedItems);
+                viewModel.handleScannedItems(scannedItems);
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('Items added!')));
               }
             },
 
@@ -52,7 +54,12 @@ class DocDetailPage extends StatelessWidget {
               }
             },
 
-            onSubmit: () => viewModel.save(context),
+            onSubmit: () async {
+              await viewModel.save();
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('Document saved!')));
+            },
             onDelete: () async {
               final confirmed = await showDialog<bool>(
                 context: context,

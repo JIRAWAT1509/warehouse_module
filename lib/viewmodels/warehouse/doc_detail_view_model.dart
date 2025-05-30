@@ -27,7 +27,7 @@ class DocDetailViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> handleItemScan(BuildContext context, String code) async {
+  Future<void> handleItemScan(String code) async {
     final existing = items.firstWhere(
       (item) =>
           item['itemNo'] == code &&
@@ -40,23 +40,15 @@ class DocDetailViewModel with ChangeNotifier {
       existing['qty'] += qty1;
     } else {
       items.add({
-        'itemNo': code,
-        'lotNo': '',
-        'qty': qty1,
+        // 'itemNo': code,
+        // 'lotNo': '',
+        // 'qty': qty1,
         'location': location,
         'bin': bin,
       });
     }
 
-    // บันทึกลง LocalStorage หลัง scan
-    final docs = await LocalStorageService.loadDocuments();
-    final index = docs.indexWhere((d) => d['no'] == docNo);
-    if (index != -1) {
-      docs[index]['items'] = items;
-      await LocalStorageService.saveDocuments(docs);
-    }
-
-    notifyListeners();
+    await save();
   }
 
   Future<void> handleLotScan(BuildContext context, String code) async {
@@ -83,10 +75,7 @@ class DocDetailViewModel with ChangeNotifier {
     bin = binValue;
   }
 
-  void handleScannedItems(
-    BuildContext context,
-    List<Map<String, dynamic>> scannedItems,
-  ) {
+  void handleScannedItems(List<Map<String, dynamic>> scannedItems) {
     for (var scannedItem in scannedItems) {
       final existing = items.firstWhere(
         (item) =>
@@ -109,20 +98,17 @@ class DocDetailViewModel with ChangeNotifier {
       }
     }
 
-    save(context); // บันทึกทันที
-    notifyListeners();
+    save(); // Save ทันที แต่ไม่โชว์ SnackBar ที่นี่
   }
 
-  Future<void> save(BuildContext context) async {
+  Future<void> save() async {
     final docs = await LocalStorageService.loadDocuments();
     final index = docs.indexWhere((d) => d['no'] == docNo);
     if (index != -1) {
       docs[index]['items'] = items;
     }
     await LocalStorageService.saveDocuments(docs);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Document saved!')));
+    notifyListeners();
   }
 
   Future<void> deleteDoc(BuildContext context) async {
@@ -130,6 +116,65 @@ class DocDetailViewModel with ChangeNotifier {
     docs.removeWhere((d) => d['no'] == docNo);
     await LocalStorageService.saveDocuments(docs);
     // Navigator.pop(context, true);
+    notifyListeners();
+  }
+
+  void mergeOrAddQty(Map<String, dynamic> newItem) {
+    final index = items.indexWhere(
+      (item) =>
+          item['itemNo'] == newItem['itemNo'] &&
+          (item['lotNo'] ?? '') == (newItem['lotNo'] ?? '') &&
+          (item['location'] ?? '') == (newItem['location'] ?? '') &&
+          (item['bin'] ?? '') == (newItem['bin'] ?? ''),
+    );
+
+    if (index != -1) {
+      items[index]['qty'] = (items[index]['qty'] ?? 0) + (newItem['qty'] ?? 0);
+    } else {
+      items.add(newItem);
+    }
+
+    notifyListeners();
+  }
+
+  // สำหรับ Replace ค่า (ใช้ตอน Edit Item Page)
+  void replaceItem(Map<String, dynamic> updatedItem) {
+    final index = items.indexWhere(
+      (item) =>
+          item['itemNo'] == updatedItem['itemNo'] &&
+          (item['lotNo'] ?? '') == (updatedItem['lotNo'] ?? '') &&
+          (item['location'] ?? '') == (updatedItem['location'] ?? '') &&
+          (item['bin'] ?? '') == (updatedItem['bin'] ?? ''),
+    );
+
+    if (index != -1) {
+      items[index] = updatedItem;
+    } else {
+      items.add(updatedItem);
+    }
+
+    notifyListeners();
+  }
+
+  void updateOrReplaceItem(
+    Map<String, dynamic> oldItem,
+    Map<String, dynamic> newItem,
+  ) {
+    final index = items.indexWhere(
+      (item) =>
+          item['itemNo'] == oldItem['itemNo'] &&
+          (item['lotNo'] ?? '') == (oldItem['lotNo'] ?? '') &&
+          (item['location'] ?? '') == (oldItem['location'] ?? '') &&
+          (item['bin'] ?? '') == (oldItem['bin'] ?? ''),
+    );
+
+    if (index != -1) {
+      // อัปเดตค่าใหม่ไปเลย
+      items[index] = newItem;
+    } else {
+      items.add(newItem);
+    }
+
     notifyListeners();
   }
 }
