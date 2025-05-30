@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:warehouse_module/core/templates/doc_detail_view_model.dart';
+import 'package:warehouse_module/viewmodels/warehouse/doc_detail_view_model.dart';
 import 'package:warehouse_module/core/templates/document_detail_template.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:warehouse_module/views/warehouse/common_barcode_scan_page.dart';
@@ -20,14 +20,14 @@ class DocDetailPage extends StatelessWidget {
             docNo: docNo,
             items: viewModel.items,
             onScanItem: () async {
-              //too fast cycle : build scan flex item
-              final code = await Navigator.push(
+              final scannedItems = await Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => CommonBarcodeScanPage()),
               );
 
-              if (code != null) {
-                viewModel.handleItemScan(context, code);
+              if (scannedItems != null &&
+                  scannedItems is List<Map<String, dynamic>>) {
+                viewModel.handleScannedItems(context, scannedItems);
               }
             },
 

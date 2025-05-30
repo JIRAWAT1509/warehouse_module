@@ -15,93 +15,63 @@ class _CommonBarcodeScanPageState extends State<CommonBarcodeScanPage> {
   String? scanDoc;
   List<Map<String, dynamic>> items = List.empty(growable: true);
 
-  // [
-  //   DataRow(
-  //     cells: <DataCell>[
-  //       DataCell(Text('Mohit')),
-  //       DataCell(Text('23')),
-  //       DataCell(Text('Professional')),
-  //     ],
-  //   ),
-  //   DataRow(
-  //     cells: <DataCell>[
-  //       DataCell(Text('Aditya')),
-  //       DataCell(Text('24')),
-  //       DataCell(Text('Associate Professor')),
-  //     ],
-  //   ),
-  // ];
-
   final MobileScannerController controller = MobileScannerController(
     detectionSpeed: DetectionSpeed.noDuplicates,
+    formats: [
+      BarcodeFormat.code128,
+      BarcodeFormat.code39,
+      BarcodeFormat.ean13,
+      BarcodeFormat.ean8,
+      BarcodeFormat.upcA,
+      BarcodeFormat.upcE,
+    ],
   );
 
   //required this.docNo
+  // @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          Expanded(
+          // กล้อง สูง 300px พอ
+          SizedBox(
+            height: 300,
             child: MobileScanner(
               controller: controller,
-
               onDetect: (capture) async {
                 final code = capture.barcodes.first.rawValue;
                 if (code == null) return;
                 print(code);
 
-                if (items.isEmpty) {
-                  items.add({'itemNo': code, 'qty': 1});
+                final existing = items.firstWhere(
+                  (item) => item['itemNo'] == code,
+                  orElse: () => {},
+                );
+
+                if (existing.isNotEmpty) {
+                  existing['qty'] += 1;
                 } else {
-                  final existing = items.firstWhere(
-                    (item) => item['itemNo'] == code,
-                    orElse: () => {},
-                  );
-
-                  if (existing.isNotEmpty) {
-                    existing['qty'] += 1;
-                  } else {
-                    items.add({
-                      'itemNo': code,
-                      'lotNo': '',
-                      'qty': 1,
-                      // 'location': location,
-                      // 'bin': bin,
-                    });
-                  }
-
-                  // if (items.contains(code)) {
-                  //   existing['qty'] += 1;
-                  // } else {
-                  //   items.add({'itemNo': code, 'qty': 1});
-                  // }
+                  items.add({'itemNo': code, 'qty': 1});
                 }
 
-                ;
-
-                setState(() {
-                  scanDoc = code;
-                });
-
-                // Navigator.pop(context, code); // ส่งค่า code กลับ
+                setState(() {});
               },
             ),
           ),
-          // Expanded(child: Container(child: Text(scanDoc ?? "-"))),
+
+          // ตาราง ขยายเต็มที่
           Expanded(
             child: DataTable(
-              columns: const <DataColumn>[
-                // DataColumn(label: Text('No.')),
+              columns: const [
                 DataColumn(label: Text('Doc No.')),
-                DataColumn(label: Text('qty')),
+                DataColumn(label: Text('Qty')),
               ],
               rows:
                   items
                       .map(
                         (item) => DataRow(
-                          cells: <DataCell>[
-                            // DataCell(Text(item["qty"])),
+                          cells: [
                             DataCell(Text(item["itemNo"] ?? "N/A")),
                             DataCell(Text(item["qty"].toString())),
                           ],
@@ -110,10 +80,110 @@ class _CommonBarcodeScanPageState extends State<CommonBarcodeScanPage> {
                       .toList(),
             ),
           ),
+
+          // ปุ่ม Submit / Cancel
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, items);
+                  },
+                  child: const Text('Submit'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, null);
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                  child: const Text('Cancel'),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
+
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     body: Column(
+  //       children: [
+  //         Expanded(
+  //           child: MobileScanner(
+  //             controller: controller,
+
+  //             onDetect: (capture) async {
+  //               final code = capture.barcodes.first.rawValue;
+  //               if (code == null) return;
+  //               print(code);
+
+  //               if (items.isEmpty) {
+  //                 items.add({'itemNo': code, 'qty': 1});
+  //               } else {
+  //                 final existing = items.firstWhere(
+  //                   (item) => item['itemNo'] == code,
+  //                   orElse: () => {},
+  //                 );
+
+  //                 if (existing.isNotEmpty) {
+  //                   existing['qty'] += 1;
+  //                 } else {
+  //                   items.add({
+  //                     'itemNo': code,
+  //                     'lotNo': '',
+  //                     'qty': 1,
+  //                     // 'location': location,
+  //                     // 'bin': bin,
+  //                   });
+  //                 }
+
+  //                 // if (items.contains(code)) {
+  //                 //   existing['qty'] += 1;
+  //                 // } else {
+  //                 //   items.add({'itemNo': code, 'qty': 1});
+  //                 // }
+  //               }
+
+  //               ;
+
+  //               setState(() {
+  //                 scanDoc = code;
+  //               });
+
+  //               // Navigator.pop(context, code); // ส่งค่า code กลับ
+  //             },
+  //           ),
+  //         ),
+  //         // Expanded(child: Container(child: Text(scanDoc ?? "-"))),
+  //         Expanded(
+  //           child: DataTable(
+  //             columns: const <DataColumn>[
+  //               // DataColumn(label: Text('No.')),
+  //               DataColumn(label: Text('Doc No.')),
+  //               DataColumn(label: Text('qty')),
+  //             ],
+  //             rows:
+  //                 items
+  //                     .map(
+  //                       (item) => DataRow(
+  //                         cells: <DataCell>[
+  //                           // DataCell(Text(item["qty"])),
+  //                           DataCell(Text(item["itemNo"] ?? "N/A")),
+  //                           DataCell(Text(item["qty"].toString())),
+  //                         ],
+  //                       ),
+  //                     )
+  //                     .toList(),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
 
 class ItemListWidget extends StatelessWidget {
@@ -159,6 +229,7 @@ class ItemListWidget extends StatelessWidget {
             ],
           ),
         ),
+
         Expanded(
           child: ListView.builder(
             itemCount: items.length,
@@ -191,6 +262,29 @@ class ItemListWidget extends StatelessWidget {
             },
           ),
         ),
+
+        Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context, items); // ส่ง items กลับไปเลย
+                },
+                child: const Text('Submit'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context, null); // ยกเลิก ไม่ส่งอะไร
+                },
+                child: const Text('Cancel'),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+
         // Padding(
         //     padding: const EdgeInsets.all(12.0),
         //     child: ElevatedButton(

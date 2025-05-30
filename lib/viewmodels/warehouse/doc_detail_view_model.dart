@@ -83,6 +83,36 @@ class DocDetailViewModel with ChangeNotifier {
     bin = binValue;
   }
 
+  void handleScannedItems(
+    BuildContext context,
+    List<Map<String, dynamic>> scannedItems,
+  ) {
+    for (var scannedItem in scannedItems) {
+      final existing = items.firstWhere(
+        (item) =>
+            item['itemNo'] == scannedItem['itemNo'] &&
+            item['location'] == location &&
+            item['bin'] == bin,
+        orElse: () => {},
+      );
+
+      if (existing.isNotEmpty) {
+        existing['qty'] += scannedItem['qty'] ?? 1;
+      } else {
+        items.add({
+          'itemNo': scannedItem['itemNo'],
+          'lotNo': '',
+          'qty': scannedItem['qty'] ?? 1,
+          'location': location,
+          'bin': bin,
+        });
+      }
+    }
+
+    save(context); // บันทึกทันที
+    notifyListeners();
+  }
+
   Future<void> save(BuildContext context) async {
     final docs = await LocalStorageService.loadDocuments();
     final index = docs.indexWhere((d) => d['no'] == docNo);
