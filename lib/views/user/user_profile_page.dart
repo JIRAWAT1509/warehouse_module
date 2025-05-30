@@ -43,7 +43,7 @@ class UserProfilePage extends StatelessWidget {
                   ),
                   Text(
                     // Use the username from the class
-                    '@${this.username}', // Make sure to use 'this.username' if you made it a class member
+                    '@$username', // Make sure to use 'this.username' if you made it a class member
                     style: TextStyle(
                       fontSize: 18,
                       color: kDarkGreyAlmostBlack,

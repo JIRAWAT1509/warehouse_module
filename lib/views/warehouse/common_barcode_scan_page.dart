@@ -15,8 +15,9 @@ class _CommonBarcodeScanPageState extends State<CommonBarcodeScanPage> {
   String? scanDoc;
   List<Map<String, dynamic>> items = List.empty(growable: true);
 
-  final MobileScannerController controller = MobileScannerController(
+  final MobileScannerController scannerController = MobileScannerController(
     detectionSpeed: DetectionSpeed.noDuplicates,
+    detectionTimeoutMs: 1000,
     formats: [
       BarcodeFormat.code128,
       BarcodeFormat.code39,
@@ -27,6 +28,12 @@ class _CommonBarcodeScanPageState extends State<CommonBarcodeScanPage> {
     ],
   );
 
+  @override
+  void dispose() {
+    scannerController.dispose();
+    super.dispose();
+  }
+
   //required this.docNo
   // @override
   @override
@@ -35,14 +42,13 @@ class _CommonBarcodeScanPageState extends State<CommonBarcodeScanPage> {
       body: Column(
         children: [
           // กล้อง สูง 300px พอ
-          SizedBox(
-            height: 300,
+          Expanded(
+           
             child: MobileScanner(
-              controller: controller,
+              controller: scannerController,
               onDetect: (capture) async {
                 final code = capture.barcodes.first.rawValue;
                 if (code == null) return;
-                print(code);
 
                 final existing = items.firstWhere(
                   (item) => item['itemNo'] == code,
@@ -62,6 +68,7 @@ class _CommonBarcodeScanPageState extends State<CommonBarcodeScanPage> {
 
           // ตาราง ขยายเต็มที่
           Expanded(
+            flex: 2,
             child: DataTable(
               columns: const [
                 DataColumn(label: Text('Doc No.')),
@@ -80,30 +87,32 @@ class _CommonBarcodeScanPageState extends State<CommonBarcodeScanPage> {
                       .toList(),
             ),
           ),
-
-          // ปุ่ม Submit / Cancel
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context, items);
-                  },
-                  child: const Text('Submit'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context, null);
-                  },
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-                  child: const Text('Cancel'),
-                ),
-              ],
-            ),
-          ),
         ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context, items); // ส่ง items กลับไปเลย
+                },
+                child: const Text('Submit'),
+              ),
+            ),
+            SizedBox(width: 8), // เว้นระยะเล็กน้อย
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context, null); // ยกเลิก ไม่ส่งอะไร
+                },
+                child: const Text('Cancel'),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
