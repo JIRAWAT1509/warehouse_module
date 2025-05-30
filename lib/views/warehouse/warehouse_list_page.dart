@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:warehouse_module/core/templates/document_list_template.dart';
+import 'package:warehouse_module/views/warehouse/common_barcode_scan_page.dart';
 import 'package:warehouse_module/views/warehouse/doc_detail_page.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
@@ -60,17 +61,7 @@ class _WarehouseListPageState extends State<WarehouseListPage> {
               context,
               MaterialPageRoute(
                 builder:
-                    (context) => MobileScanner(
-                      controller: scannerController,
-                      onDetect: (capture) async {
-                        final code = capture.barcodes.first.rawValue;
-                        if (code == null) return;
-                        Navigator.pop(context);
-                        await viewModel.handleScan(scaffoldContext, code);
-                      },
-                      onDetectError:
-                          (error, stackTrace) => print("Scan error: $error"),
-                    ),
+                    (context) => CommonBarcodeScanPage(),
               ),
             );
           },

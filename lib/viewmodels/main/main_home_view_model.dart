@@ -2,15 +2,11 @@ import 'package:flutter/material.dart';
 // import 'package:warehouse_module/app/routes.dart';
 
 class MainHomeViewModel with ChangeNotifier {
-  void navigateToWarehouse(BuildContext context) {
-    Navigator.pushNamed(context, '/warehouse');
-  }
+  int _selectedIndex = 0;
+  int get selectedIndex => _selectedIndex;
 
-  void navigateToPurchase(BuildContext context) {
-    Navigator.pushNamed(context, '/purchase');
-  }
-
-  void navigateToSales(BuildContext context) {
-    Navigator.pushNamed(context, '/sales');
+  void updateSelectedIndex(int index) {
+    _selectedIndex = index;
+    notifyListeners();
   }
 }

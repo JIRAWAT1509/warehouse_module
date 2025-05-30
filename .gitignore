@@ -8,3 +8,53 @@ build/
 .idea/
 .vscode/
 android/.gradle/
+
+# iOS
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/engine/
+ios/Flutter/flutter_assets/
+ios/ServiceDefinitions.json
+ios/Runner.xcworkspace/
+ios/Pods/
+ios/Podfile.lock
+
+# Android
+android/.gradle/
+android/app/debug/
+android/app/profile/
+android/app/release/
+android/local.properties
+android/.idea/
+android/.settings/
+android/.externalNativeBuild/
+android/captures/
+android/gradle/
+android/gradlew
+android/gradlew.bat
+android/gradle-wrapper.jar
+android/gradle-wrapper.properties
+
+# Web
+web/.dart_tool/
+web/build/
+
+# Misc
+*.log
+*.tmp
+*.swp
+*.swo
+*.DS_Store
+
+# Others
+pubspec.lock
+.flutter-plugins
+.flutter-plugins-dependencies
+.flutter-versions
+.metadata
+.melos_tool/
+
+.

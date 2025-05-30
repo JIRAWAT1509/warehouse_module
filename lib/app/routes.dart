@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:warehouse_module/views/main/main_home_page.dart';
 import 'package:warehouse_module/views/warehouse/warehouse_list_page.dart';
-import 'package:warehouse_module/views/warehouse/warehouse_home_page.dart';
 
 // Import your new auth pages
 import 'package:warehouse_module/views/auth/login_page.dart';
@@ -32,7 +31,6 @@ class AppRoutes {
     login: (context) => const LoginPage(),
     signup: (context) => const SignUpPage(),
     mainHome: (context) => const MainHomePage(),
-    warehouse: (context) => const WarehouseHomePage(),
     warehouseList: (context) => const WarehouseListPage(),
     // For userProfile route, you need to provide the username
     userProfile: (context) {
