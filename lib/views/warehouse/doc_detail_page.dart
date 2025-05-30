@@ -19,6 +19,7 @@ class DocDetailPage extends StatelessWidget {
           return DocumentDetailTemplate(
             docNo: docNo,
             items: viewModel.items,
+            viewModel: viewModel,
             onScanItem: () async {
               final scannedItems = await Navigator.push(
                 context,

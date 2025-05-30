@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 // import 'package:warehouse_module/core/widgets/buttons/scanner_button.dart';
 import 'package:warehouse_module/core/widgets/item_list_widget.dart';
+import 'package:warehouse_module/viewmodels/warehouse/doc_detail_view_model.dart';
+import 'package:warehouse_module/views/item_edit_page.dart';
 
 class DocumentDetailTemplate extends StatefulWidget {
   final String docNo;
@@ -10,11 +12,13 @@ class DocumentDetailTemplate extends StatefulWidget {
   final VoidCallback? onDelete;
   final VoidCallback? onScanItem;
   final VoidCallback? onScanLot;
+  final DocDetailViewModel viewModel;
 
   const DocumentDetailTemplate({
     super.key,
     required this.docNo,
     required this.items,
+    required this.viewModel, // ✅ เพิ่มใน constructor ด้วย
     this.onScan,
     this.onSubmit,
     this.onDelete,
@@ -117,11 +121,25 @@ class _DocumentDetailTemplateState extends State<DocumentDetailTemplate> {
           Expanded(
             child: ItemListWidget(
               items: widget.items,
-              onItemTap: (item) {
-                // TODO: Navigate to Edit Page
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Tapped on ${item['itemNo']}')),
+              onItemTap: (item) async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => ItemEditPage(item: item)),
                 );
+
+                if (result != null) {
+                  if (result['action'] == 'confirm') {
+                    item['lotNo'] = result['lotNo'];
+                    item['qty'] = result['qty'];
+                    widget.viewModel.save(context); // ✅ ใช้ widget.viewModel
+                  } else if (result['action'] == 'delete') {
+                    widget.viewModel.items.remove(
+                      item,
+                    ); // ✅ ใช้ widget.viewModel
+                    widget.viewModel.save(context);
+                    widget.viewModel.notifyListeners();
+                  }
+                }
               },
             ),
           ),

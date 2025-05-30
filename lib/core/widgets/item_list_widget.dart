@@ -28,7 +28,7 @@ class ItemListWidget extends StatelessWidget {
             itemBuilder: (context, index) {
               final item = items[index];
               return InkWell(
-                onTap: () => onItemTap?.call(item),
+                onTap: () => onItemTap?.call(item), // แค่ call callback
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
