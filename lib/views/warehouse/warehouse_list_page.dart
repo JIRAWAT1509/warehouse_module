@@ -61,7 +61,17 @@ class _WarehouseListPageState extends State<WarehouseListPage> {
               context,
               MaterialPageRoute(
                 builder:
-                    (context) => CommonBarcodeScanPage(),
+                    (context) => MobileScanner(
+                      controller: scannerController,
+                      onDetect: (capture) async {
+                        final code = capture.barcodes.first.rawValue;
+                        if (code == null) return;
+                        Navigator.pop(context);
+                        await viewModel.handleScan(scaffoldContext, code);
+                      },
+                      onDetectError:
+                          (error, stackTrace) => print("Scan error: $error"),
+                    ), //Because of different purpose, I prefer this one.
               ),
             );
           },
