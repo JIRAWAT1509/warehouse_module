@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:warehouse_module/core/widgets/buttons/scanner_button.dart';
+// import 'package:warehouse_module/core/widgets/buttons/scanner_button.dart';
 import 'package:warehouse_module/core/widgets/item_list_widget.dart';
 
 class DocumentDetailTemplate extends StatefulWidget {
