@@ -1,3 +1,4 @@
+import 'package:warehouse_module/viewmodels/auth/auth_header.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:warehouse_module/app/routes.dart';
@@ -104,39 +105,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildHeader() {
-    return Row(
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Log in',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(top: 8),
-              height: 2,
-              width: 60,
-              color: Colors.black,
-            ),
-          ],
-        ),
-        const SizedBox(width: 20),
-        Text(
-          'Sign up',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.normal,
-            color: Colors.grey[400],
-          ),
-        ),
-      ],
-    );
-  }
+  return const AuthHeader(isLogin: true);
+}
+
 
   Widget _buildEmailInputField() {
     return Column(

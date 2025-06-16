@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:warehouse_module/app/routes.dart';
 import 'package:warehouse_module/viewmodels/auth/auth_view_model.dart';
+import 'package:warehouse_module/viewmodels/auth/auth_header.dart';
 
 // SignUpPage StatefulWidget for user registration
 class SignUpPage extends StatefulWidget {
@@ -123,44 +124,11 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   }
+Widget _buildHeader(BuildContext context) {
+  return const AuthHeader(isLogin: false);
+}
 
-  Widget _buildHeader(BuildContext context) {
-    return Row(
-      children: [
-        GestureDetector(
-          onTap: () => Navigator.of(context).pushReplacementNamed(AppRoutes.login),
-          child: Text(
-            'Log in',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.normal,
-              color: Colors.grey[400],
-            ),
-          ),
-        ),
-        const SizedBox(width: 20),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Sign up',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(top: 8),
-              height: 2,
-              width: 70,
-              color: Colors.black,
-            ),
-          ],
-        ),
-      ],
-    );
-  }
+
 
   Widget _buildEmailField() {
     return Column(
