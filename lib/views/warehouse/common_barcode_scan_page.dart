@@ -15,6 +15,10 @@ class _CommonBarcodeScanPageState extends State<CommonBarcodeScanPage> {
   String? scanDoc;
   List<Map<String, dynamic>> items = List.empty(growable: true);
 
+  final TextEditingController locationController = TextEditingController();
+  final TextEditingController binController = TextEditingController();
+  final TextEditingController lotNoController = TextEditingController();
+
   final MobileScannerController scannerController = MobileScannerController(
     detectionSpeed: DetectionSpeed.noDuplicates,
     detectionTimeoutMs: 1000,
@@ -31,47 +35,81 @@ class _CommonBarcodeScanPageState extends State<CommonBarcodeScanPage> {
   @override
   void dispose() {
     scannerController.dispose();
+    locationController.dispose();
+    binController.dispose();
+    lotNoController.dispose();
     super.dispose();
   }
 
-  //required this.docNo
-  // @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          // กล้อง สูง 300px พอ
           Expanded(
-           
             child: MobileScanner(
               controller: scannerController,
-              onDetect: (capture) async {
+              onDetect: (capture) {
                 final code = capture.barcodes.first.rawValue;
                 if (code == null) return;
 
+                final location = locationController.text.trim();
+                final bin = binController.text.trim();
+                final lotNo = lotNoController.text.trim();
+
                 final existing = items.firstWhere(
-                  (item) => item['itemNo'] == code,
+                  (item) =>
+                      item['itemNo'] == code &&
+                      item['location'] == location &&
+                      item['bin'] == bin &&
+                      item['lotNo'] == lotNo,
                   orElse: () => {},
                 );
 
                 if (existing.isNotEmpty) {
                   existing['qty'] += 1;
                 } else {
-                  items.add({'itemNo': code, 'qty': 1});
+                  items.add({
+                    'itemNo': code,
+                    'qty': 1,
+                    'location': locationController.text.trim(),
+                    'bin': binController.text.trim(),
+                    'lotNo': lotNoController.text.trim(),
+                  });
                 }
 
                 setState(() {});
               },
             ),
           ),
-
-          // ตาราง ขยายเต็มที่
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              children: [
+                TextField(
+                  controller: locationController,
+                  decoration: const InputDecoration(labelText: 'Location'),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: binController,
+                  decoration: const InputDecoration(labelText: 'Bin No.'),
+                ),
+                TextField(
+                  controller: lotNoController,
+                  decoration: const InputDecoration(labelText: 'lot No.'),
+                ),
+              ],
+            ),
+          ),
           Expanded(
             flex: 2,
             child: DataTable(
               columns: const [
-                DataColumn(label: Text('Doc No.')),
+                DataColumn(label: Text('Item No.')),
+                DataColumn(label: Text('Location')),
+                DataColumn(label: Text('Bin')),
+                DataColumn(label: Text('lotNo')),
                 DataColumn(label: Text('Qty')),
               ],
               rows:
@@ -80,6 +118,9 @@ class _CommonBarcodeScanPageState extends State<CommonBarcodeScanPage> {
                         (item) => DataRow(
                           cells: [
                             DataCell(Text(item["itemNo"] ?? "N/A")),
+                            DataCell(Text(item["location"] ?? "-")),
+                            DataCell(Text(item["bin"] ?? "-")),
+                            DataCell(Text(item["lotNo"] ?? "-")),
                             DataCell(Text(item["qty"].toString())),
                           ],
                         ),
@@ -91,24 +132,23 @@ class _CommonBarcodeScanPageState extends State<CommonBarcodeScanPage> {
       ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
-          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context, items); // ส่ง items กลับไปเลย
+                  Navigator.pop(context, items);
                 },
                 child: const Text('Submit'),
               ),
             ),
-            SizedBox(width: 8), // เว้นระยะเล็กน้อย
+            const SizedBox(width: 8),
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context, null); // ยกเลิก ไม่ส่งอะไร
+                  Navigator.pop(context, null);
                 },
-                child: const Text('Cancel'),
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                child: const Text('Cancel'),
               ),
             ),
           ],
@@ -116,83 +156,6 @@ class _CommonBarcodeScanPageState extends State<CommonBarcodeScanPage> {
       ),
     );
   }
-
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     body: Column(
-  //       children: [
-  //         Expanded(
-  //           child: MobileScanner(
-  //             controller: controller,
-
-  //             onDetect: (capture) async {
-  //               final code = capture.barcodes.first.rawValue;
-  //               if (code == null) return;
-  //               print(code);
-
-  //               if (items.isEmpty) {
-  //                 items.add({'itemNo': code, 'qty': 1});
-  //               } else {
-  //                 final existing = items.firstWhere(
-  //                   (item) => item['itemNo'] == code,
-  //                   orElse: () => {},
-  //                 );
-
-  //                 if (existing.isNotEmpty) {
-  //                   existing['qty'] += 1;
-  //                 } else {
-  //                   items.add({
-  //                     'itemNo': code,
-  //                     'lotNo': '',
-  //                     'qty': 1,
-  //                     // 'location': location,
-  //                     // 'bin': bin,
-  //                   });
-  //                 }
-
-  //                 // if (items.contains(code)) {
-  //                 //   existing['qty'] += 1;
-  //                 // } else {
-  //                 //   items.add({'itemNo': code, 'qty': 1});
-  //                 // }
-  //               }
-
-  //               ;
-
-  //               setState(() {
-  //                 scanDoc = code;
-  //               });
-
-  //               // Navigator.pop(context, code); // ส่งค่า code กลับ
-  //             },
-  //           ),
-  //         ),
-  //         // Expanded(child: Container(child: Text(scanDoc ?? "-"))),
-  //         Expanded(
-  //           child: DataTable(
-  //             columns: const <DataColumn>[
-  //               // DataColumn(label: Text('No.')),
-  //               DataColumn(label: Text('Doc No.')),
-  //               DataColumn(label: Text('qty')),
-  //             ],
-  //             rows:
-  //                 items
-  //                     .map(
-  //                       (item) => DataRow(
-  //                         cells: <DataCell>[
-  //                           // DataCell(Text(item["qty"])),
-  //                           DataCell(Text(item["itemNo"] ?? "N/A")),
-  //                           DataCell(Text(item["qty"].toString())),
-  //                         ],
-  //                       ),
-  //                     )
-  //                     .toList(),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }
 
 class ItemListWidget extends StatelessWidget {
@@ -232,8 +195,8 @@ class ItemListWidget extends StatelessWidget {
           child: Row(
             children: const [
               Expanded(flex: 2, child: Text('No.')),
-              Expanded(flex: 4, child: Text('Item')),
-              // Expanded(flex: 3, child: Text('Lot no.')),
+              Expanded(flex: 3, child: Text('Item')),
+              Expanded(flex: 3, child: Text('Lot no.')),
               Expanded(flex: 2, child: Text('Qty')),
             ],
           ),

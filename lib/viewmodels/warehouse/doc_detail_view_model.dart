@@ -9,6 +9,7 @@ class DocDetailViewModel with ChangeNotifier {
   double qty2 = 1.0;
   String location = '';
   String bin = '';
+  String lotNo = '';
 
   DocDetailViewModel(this.docNo) {
     loadData();
@@ -32,7 +33,8 @@ class DocDetailViewModel with ChangeNotifier {
       (item) =>
           item['itemNo'] == code &&
           item['location'] == location &&
-          item['bin'] == bin,
+          item['bin'] == bin &&
+          item['lotNo'] == lotNo,
       orElse: () => {},
     );
 
@@ -41,7 +43,7 @@ class DocDetailViewModel with ChangeNotifier {
     } else {
       items.add({
         // 'itemNo': code,
-        // 'lotNo': '',
+        'lotNo': lotNo,
         // 'qty': qty1,
         'location': location,
         'bin': bin,
@@ -68,11 +70,13 @@ class DocDetailViewModel with ChangeNotifier {
     required double qty2Value,
     required String locationValue,
     required String binValue,
+    required String lotNoValue,
   }) {
     qty1 = qty1Value;
     qty2 = qty2Value;
     location = locationValue;
     bin = binValue;
+    lotNo = lotNoValue;
   }
 
   void handleScannedItems(List<Map<String, dynamic>> scannedItems) {
@@ -80,8 +84,9 @@ class DocDetailViewModel with ChangeNotifier {
       final existing = items.firstWhere(
         (item) =>
             item['itemNo'] == scannedItem['itemNo'] &&
-            item['location'] == location &&
-            item['bin'] == bin,
+            item['location'] == scannedItem['location'] &&
+            item['bin'] == scannedItem['bin'] &&
+            item['lotNo'] == scannedItem['lotNo'],
         orElse: () => {},
       );
 
@@ -90,10 +95,10 @@ class DocDetailViewModel with ChangeNotifier {
       } else {
         items.add({
           'itemNo': scannedItem['itemNo'],
-          'lotNo': '',
+          'lotNo': scannedItem['lotNo'] ?? '',
           'qty': scannedItem['qty'] ?? 1,
-          'location': location,
-          'bin': bin,
+          'location': scannedItem['location'] ?? '',
+          'bin': scannedItem['bin'] ?? '',
         });
       }
     }
@@ -169,7 +174,6 @@ class DocDetailViewModel with ChangeNotifier {
     );
 
     if (index != -1) {
-      // อัปเดตค่าใหม่ไปเลย
       items[index] = newItem;
     } else {
       items.add(newItem);

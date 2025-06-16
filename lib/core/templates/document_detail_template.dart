@@ -318,12 +318,14 @@ class _DocumentDetailTemplateState extends State<DocumentDetailTemplate> {
               final bin = binController.text.trim();
               final qty1 = double.tryParse(qty1Controller.text) ?? 1.0;
               final qty2 = double.tryParse(qty2Controller.text) ?? 1.0;
+              final lotNo = lotController.text.trim();
 
               widget.viewModel.updateForm(
                 qty1Value: qty1,
                 qty2Value: qty2,
                 locationValue: location,
                 binValue: bin,
+                lotNoValue: lotNo,
               );
 
               widget.onScanItem?.call();
