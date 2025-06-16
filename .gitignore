@@ -58,3 +58,6 @@ pubspec.lock
 .melos_tool/
 
 .
+.fvmrc
+.flutter-plugins-dependencies
+.flutter-plugins-dependencies

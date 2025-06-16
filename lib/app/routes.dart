@@ -26,19 +26,21 @@ class AppRoutes {
   static const String salesReturn = '/sales/return';
   static const String userProfile = '/user-profile'; // <--- Route for UserProfilePage
 
-
   static final Map<String, WidgetBuilder> routes = {
     login: (context) => const LoginPage(),
     signup: (context) => const SignUpPage(),
     mainHome: (context) => const MainHomePage(),
     warehouseList: (context) => const WarehouseListPage(),
-    // For userProfile route, you need to provide the username
     userProfile: (context) {
       final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
       return UserProfilePage(username: authViewModel.currentUsername ?? 'Guest');
     },
-    purchase: (context) => Container(color: Colors.white, child: const Center(child: Text("Purchases Page"))),
+    purchase: (context) => _simplePage(text: "Purchases Page"),
     // You also need to define the 'sales' route if you have it in your constants
-    // sales: (context) => Container(color: Colors.white, child: const Center(child: Text("Sales Page"))),
+    // sales: (context) => _simplePage(text: "Sales Page"),
   };
+
+  static Widget _simplePage({required String text}) {
+    return Container(color: Colors.white, child: Center(child: Text(text)));
+  }
 }

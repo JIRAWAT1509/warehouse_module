@@ -22,28 +22,22 @@ class MyApp extends StatelessWidget {
       // Wrap MaterialApp with a Consumer to react to AuthViewModel changes
       child: Consumer<AuthViewModel>(
         builder: (context, authViewModel, child) {
-          // Determine the initial route based on authentication state
-          final initialRoute = authViewModel.isLoggedIn
-              ? AppRoutes.mainHome
-              : AppRoutes.login;
-
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Warehouse App',
             theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue),
-            initialRoute: initialRoute, // Set initial route dynamically
+            initialRoute: authViewModel.isLoggedIn ? AppRoutes.mainHome : AppRoutes.login,
             routes: AppRoutes.routes,
-            // Add a onGenerateRoute to handle initial routing when Navigator pops back
-            // or when pushReplacementNamed is used
             onGenerateRoute: (settings) {
+              // Redirect to login if trying to access mainHome while not logged in
               if (settings.name == AppRoutes.mainHome && !authViewModel.isLoggedIn) {
-                // If trying to access mainHome but not logged in, redirect to login
                 return MaterialPageRoute(builder: (_) => AppRoutes.routes[AppRoutes.login]!(context));
               }
+              // Redirect to mainHome if trying to access login while already logged in
               if (settings.name == AppRoutes.login && authViewModel.isLoggedIn) {
-                // If trying to access login but already logged in, redirect to mainHome
                 return MaterialPageRoute(builder: (_) => AppRoutes.routes[AppRoutes.mainHome]!(context));
               }
+              // Default route handling
               return MaterialPageRoute(builder: (_) => AppRoutes.routes[settings.name]!(context));
             },
           );
